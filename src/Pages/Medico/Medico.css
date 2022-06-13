@@ -1,0 +1,14 @@
+.home-medico {
+    width: 90%;
+    max-width: 700px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form {
+    width: 100%;
+    max-width: 500px;
+    background-color: white;
+    padding: 20px;
+}
