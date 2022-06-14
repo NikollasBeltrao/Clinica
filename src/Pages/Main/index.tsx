@@ -13,11 +13,12 @@ interface Props {
 class Main extends React.Component <Props, State> {
     constructor (props: Props) {
         super(props);
-        let session = sessionStorage.getItem('login');
+        let session = sessionStorage.getItem('login');        
         this.state = {
             user: session? JSON.parse(session) : '',
             page: 0
-        }
+        }        
+            
     }
     sair = () => {
         sessionStorage.clear();
@@ -29,7 +30,7 @@ class Main extends React.Component <Props, State> {
     render() {
         return (<>
         <TopBar main={this}/>
-        <Routes page={this.state.page}/>
+        <Routes page={this.state.page} main={this}/>
         </>);
     }
 }

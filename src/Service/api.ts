@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    //baseURL: 'https://emlacademico.com.br/api/',
-    baseURL: 'http://localhost/projetobd/',     
+    baseURL: 'https://backend-analise.000webhostapp.com/projetobd/',
+    //baseURL: 'http://localhost/projetobd/',     
     //baseURL: 'http://qnikollasteste.net/api/',
 });
 

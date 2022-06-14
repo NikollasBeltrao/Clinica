@@ -5,7 +5,11 @@ import Medico from '../../VO/Medico';
 import User from '../../VO/User';
 import './login.css';
 
-const Login: React.FC = () => {
+interface Props {    
+    main: any,
+}
+
+const Login: React.FC<Props> = (props) => {
     const history = useHistory();
     const [user, setUser] = useState(new User(0, '', ''));
     const [err, setErr] = useState('');
@@ -23,6 +27,7 @@ const Login: React.FC = () => {
                     if (res.data) {
                         sessionStorage.clear();
                         sessionStorage.setItem('login', JSON.stringify(res.data));
+                        props.main.setState({user: res.data})
                         console.log(res.data)
                         history.push(res.data.tipo);
                     }

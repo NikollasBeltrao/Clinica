@@ -1,12 +1,15 @@
 import React from 'react';
 import { Route, BrowserRouter, Switch, Redirect } from 'react-router-dom';
+import Atendente from './Pages/Atendente';
 import Login from './Pages/Login';
 import Medico from './Pages/Medico';
+import Paciente from './Pages/Paciente/Paciente';
 
 
 interface Props {
     location?: any,
-    page: number
+    page: number,
+    main: any,
 }
 const Page404: React.FC<Props> = (props) => {
     //window.location.href = 'https://emlacademico.com.br/api/erro/index.html';
@@ -43,8 +46,10 @@ const Routes = (propsr: Props) => {
     return (
         <BrowserRouter>
             <Switch>
-                <Route component={Login} exact path="/" />
+                <Route render={props => <Login main={propsr.main} />}exact path="/" />
                 <Route render={props => <Medico {...props} page={propsr.page} />} path="/medico" />
+                <Route render={props => <Atendente {...props} page={propsr.page} />} path="/atendente" />
+                <Route render={props => <Paciente {...props} page={propsr.page} />} path="/paciente" />
                {/* <PrivateRoute component={DiretorPage} path="/diretor" />
                 <Route render={props => <Imprimir {...props} aluno={JSON.parse(props.match.params.aluno)} />} path="/imprimir/:aluno" />*/}
                 <Route component={Page404} />

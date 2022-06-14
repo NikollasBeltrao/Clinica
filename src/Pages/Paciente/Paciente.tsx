@@ -2,40 +2,23 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import api from '../../Service/api';
 import ConsultaVO from '../../VO/Consulta';
-import EspecialidadeVO from '../../VO/Especialidade';
-import MedicoVO from '../../VO/Medico';
-import "./Medico.css";
+import PacienteVO from '../../VO/Paciente';
 
 interface Props {
     page: number
 }
 
-const Medico: React.FC<Props> = (props) => {
+const Paciente: React.FC<Props> = (props) => {
     const history = useHistory();
-    const [user, setUser] = useState(new MedicoVO('', '', '', '', '', 0, 0, 0));
-    const [userC, setUserC] = useState(new MedicoVO('', '', '', '', '', 0, 0, 0));
+    const [user, setUser] = useState(new PacienteVO('', '', '', '', '', '', '', '', 0, 0));
+    const [userC, setUserC] = useState(new PacienteVO('', '', '', '', '', '', '', '', 0, 0));
     const [consultas, setConsultas] = useState(new Array<ConsultaVO>());
-    const [especialidades, setEspecialidades] = useState(new Array<EspecialidadeVO>());
-    async function listarConsultas(id_medico: number) {
-        await api.get("medico/medico.php?listarConsultas=listarConsultas&id_medico=" + id_medico)
+    async function listarConsultas(id_paciente: number) {
+        await api.get("paciente/paciente.php?listarConsultas=listarConsultas&id_paciente=" + id_paciente)
             .then(res => {
+                console.log(res.data)
                 if (res.data) {
                     setConsultas(res.data);
-                }
-                else {
-                    console.log(1);
-
-                }
-
-            }).catch(res => {
-                console.log(res);
-            })
-    }
-    async function listarEspecialidades() {
-        await api.get("medico/medico.php?listar_especialidades=listar_especialidades")
-            .then(res => {
-                if (res.data) {
-                    setEspecialidades(res.data);
                 }
                 else {
                     console.log(1);
@@ -62,12 +45,12 @@ const Medico: React.FC<Props> = (props) => {
     async function submitForm(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         let erro = '';
-        if (userC.email != '' && userC.nome_medico != '') {
+        if (userC.email != '' && userC.nome_paciente != '') {
             var form_data = new FormData();
             let object = await JSON.parse(JSON.stringify(userC));
             await Object.keys(object).forEach(key => form_data.append(key, object[key]));
-            form_data.append("editarMedico", "editarMedico");
-            await api.post("medico/medico.php", form_data)
+            form_data.append("editarPaciente", "editarPaciente");
+            await api.post("paciente/paciente.php", form_data)
                 .then(res => {
                     if (res.data) {
                         sessionStorage.clear();
@@ -88,12 +71,11 @@ const Medico: React.FC<Props> = (props) => {
     }
 
     useEffect(() => {
-        listarEspecialidades();
         let a = sessionStorage.getItem('login');
-        if (a && JSON.parse(a).tipo === 'medico') {
+        if (a && JSON.parse(a).tipo === 'paciente') {
             setUser(JSON.parse(a));
             setUserC({ ...JSON.parse(a), senha: '' });
-            listarConsultas(JSON.parse(a).id_medico);
+            listarConsultas(JSON.parse(a).id_paciente);
         }
         else {
             // history.push('/')
@@ -108,7 +90,7 @@ const Medico: React.FC<Props> = (props) => {
                     <thead className="thead-dark">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Paciente</th>
+                            <th scope="col">Médico</th>
                             <th scope="col">Data</th>
                             <th scope="col">Valor</th>
                             <th scope="col">Descrição</th>
@@ -119,7 +101,7 @@ const Medico: React.FC<Props> = (props) => {
                         {consultas.map((el, i) => {
                             return (<tr key={i}>
                                 <th scope="row">{i + 1}</th>
-                                <td>{el.nome_paciente}</td>
+                                <td>{el.nome_medico}</td>
                                 <td>{el.data.toString()}</td>
                                 <td>{el.valor}</td>
                                 <td>{el.descricao}</td>
@@ -133,22 +115,33 @@ const Medico: React.FC<Props> = (props) => {
                     <form className="form border" onSubmit={submitForm}>
                         <div className="form-group">
                             <label htmlFor="nome">Nome</label>
-                            <input type="text" className="form-control" id="nome" name="nome_medico"
-                                onChange={input} value={userC.nome_medico} />
+                            <input type="text" className="form-control" id="nome" name="nome_paciente"
+                                onChange={input} value={userC.nome_paciente} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="email">Email</label>
                             <input type="email" className="form-control" id="email"
                                 name="email" onChange={input} value={userC.email} />
                         </div>
-
-                        <div className="form-group ">
-                            <label>Especialidade</label>
-                            <select name="fk_especialidade" onChange={select} value={userC.fk_especialidade} className="form-control">
-                                {especialidades?.map((el) => {
-                                    return (<option key={el.id_especialidade} value={el.id_especialidade}>{el.especialidade}</option>)
-                                })}
-                            </select>
+                        <div className="form-group">
+                            <label htmlFor="nome">Data Nascimento</label>
+                            <input type="date" className="form-control" id="data" name="data_nascimento"
+                                onChange={input} value={userC.data_nascimento.toString()} />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="rg">RG</label>
+                            <input type="text" className="form-control" id="rg"
+                                name="rg" onChange={input} value={userC.rg} />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="cpf">CPF</label>
+                            <input type="text" className="form-control" id="cpf"
+                                name="cpf" onChange={input} value={userC.cpf} />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="telefone">Telefone</label>
+                            <input type="text" className="form-control" id="telefone"
+                                name="telefone" onChange={input} value={userC.telefone} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="senha">Nova senha</label>
@@ -162,4 +155,4 @@ const Medico: React.FC<Props> = (props) => {
     </>);
 }
 
-export default Medico;
+export default Paciente;
